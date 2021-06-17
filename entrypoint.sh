@@ -92,6 +92,19 @@ function run_tfupdate {
   echo "Running tfupdate ${COMMAND}"
   tfupdate ${COMMAND}
 
+  # update .terraform-version
+  if [ "${INPUT_RESOURCE}" = 'terraform' ]; then
+    VERSION=$(tfupdate release list hashicorp/terraform| grep -v ".*-rc[0-9]$"| sort -r| head -1)
+    FIND_ARGS=""
+    if [ ! "${INPUT_RECURSIVE}" ]; then
+      FIND_ARGS="${FIND_ARGS} -maxdepth 0"
+    fi
+    if [ "${INPUT_IGNORE_PATH}" ]; then
+      FIND_ARGS="${FIND_ARGS} -regextype posix-egrep -not -regex ${INPUT_IGNORE_PATH}"
+    fi
+    find "${INPUT_FILE_PATH}" -name .terraform-version "${FIND_ARGS}" -exec sh -c 'f="$1"; echo ${VERSION} > $f' _ {} \;
+  fi
+
   # Send a pull reuqest agaist the base branch
   if git add . && git diff --cached --exit-code --quiet; then
     echo "No changes"
