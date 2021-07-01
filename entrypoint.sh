@@ -6,6 +6,8 @@
 
 set -e
 
+
+# shellcheck disable=SC2113
 function run_tfupdate {
   case ${INPUT_RESOURCE} in
     terraform)
@@ -13,7 +15,7 @@ function run_tfupdate {
       PULL_REQUEST_BODY="For details see: https://github.com/hashicorp/terraform/releases"
       UPDATE_MESSAGE="[tfupdate] Bump Terraform to v${VERSION}"
       ;;
-  
+
     provider)
       if [ ! ${INPUT_PROVIDER_NAME} ]; then
         echo 'ERROR: "provier_name" needs to be set for "provider" resource'
