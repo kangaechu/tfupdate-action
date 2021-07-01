@@ -21,8 +21,12 @@ function run_tfupdate {
         echo 'ERROR: "provier_name" needs to be set for "provider" resource'
         exit 1
       fi
-      VERSION=$(tfupdate release latest terraform-providers/terraform-provider-${INPUT_PROVIDER_NAME})
-      PULL_REQUEST_BODY="For details see: https://github.com/terraform-providers/terraform-provider-${INPUT_PROVIDER_NAME}/releases"
+      REPOSITORY="terraform-providers/terraform-provider-${INPUT_PROVIDER_NAME}"
+      if [ -n "${INPUT_PROVIDER_REPO}" ]; then
+        REPOSITORY=${INPUT_PROVIDER_REPO}
+      fi
+      VERSION=$(tfupdate release latest "$REPOSITORY")
+      PULL_REQUEST_BODY="For details see: https://github.com/$REPOSITORY/releases"
       UPDATE_MESSAGE="[tfupdate] Bump Terraform Provider ${INPUT_PROVIDER_NAME} to v${VERSION}"
       ;;
     module)
@@ -63,6 +67,9 @@ function run_tfupdate {
   fi
   if [ ${INPUT_PROVIDER_NAME} ]; then
     ARGS="${ARGS} ${INPUT_PROVIDER_NAME}"
+  fi
+  if [ "${INPUT_PROVIDER_REPO}" ]; then
+    ARGS="${ARGS} ${INPUT_PROVIDER_REPO}"
   fi
   if [ ${INPUT_MODULE_NAME} ]; then
     ARGS="${ARGS} ${INPUT_MODULE_NAME}"
