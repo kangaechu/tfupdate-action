@@ -65,9 +65,7 @@ function run_tfupdate {
   if [ ${INPUT_IGNORE_PATH} ]; then
     ARGS="${ARGS} --ignore-path=${INPUT_IGNORE_PATH}"
   fi
-  if [ -n "${INPUT_PROVIDER_REPO}" ]; then
-    ARGS="${ARGS} ${INPUT_PROVIDER_REPO}"
-  elif [ -n "${INPUT_PROVIDER_NAME}" ]; then
+  if [ -n "${INPUT_PROVIDER_NAME}" ]; then
     ARGS="${ARGS} ${INPUT_PROVIDER_NAME}"
   fi
   if [ ${INPUT_MODULE_NAME} ]; then
