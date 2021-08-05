@@ -9,11 +9,12 @@ set -e
 
 # shellcheck disable=SC2113
 function run_tfupdate {
+  CURRENT_DATE=$(date "+%Y%m%d-%H%M%S")
   case ${INPUT_RESOURCE} in
     terraform)
       VERSION=$(tfupdate release latest hashicorp/terraform)
       PULL_REQUEST_BODY="For details see: https://github.com/hashicorp/terraform/releases"
-      UPDATE_MESSAGE="[tfupdate] Bump Terraform to v${VERSION}"
+      UPDATE_MESSAGE="[tfupdate] Bump Terraform to v${VERSION} at ${CURRENT_DATE}"
       ;;
 
     provider)
@@ -27,7 +28,7 @@ function run_tfupdate {
       fi
       VERSION=$(tfupdate release latest "$REPOSITORY")
       PULL_REQUEST_BODY="For details see: https://github.com/$REPOSITORY/releases"
-      UPDATE_MESSAGE="[tfupdate] Bump Terraform Provider ${INPUT_PROVIDER_NAME} to v${VERSION}"
+      UPDATE_MESSAGE="[tfupdate] Bump Terraform Provider ${INPUT_PROVIDER_NAME} to v${VERSION} at ${CURRENT_DATE}"
       ;;
     module)
       if ! [ ${INPUT_MODULE_NAME} ] || ! [ ${INPUT_SOURCE_TYPE} ]; then
@@ -35,7 +36,7 @@ function run_tfupdate {
         exit 1
       fi
       VERSION=$(tfupdate release latest --source-type=${INPUT_SOURCE_TYPE} ${INPUT_MODULE_NAME})
-      UPDATE_MESSAGE="[tfupdate] Bump Terraform Module ${INPUT_MODULE_NAME} to v${VERSION}"
+      UPDATE_MESSAGE="[tfupdate] Bump Terraform Module ${INPUT_MODULE_NAME} to v${VERSION} at ${CURRENT_DATE}"
       case ${INPUT_SOURCE_TYPE} in
         github)
           PULL_REQUEST_BODY="For details see: https://github.com/${INPUT_MODULE_NAME}/releases"
