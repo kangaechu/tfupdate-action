@@ -87,7 +87,8 @@ function run_tfupdate {
     echo "A pull request is already closed"
     exit 0
   else
-    CHECKOUT_BRANCH="update-${INPUT_RESOURCE}-to-v${VERSION}"
+    CURRENT_DATE=$(date "+%Y%m%d-%H%M%S")
+    CHECKOUT_BRANCH="update-${INPUT_RESOURCE}-to-v${VERSION}-${CURRENT_DATE}"
     echo "Checking out to ${CHECKOUT_BRANCH} branch"
     git fetch --all
     git checkout -b ${CHECKOUT_BRANCH} origin/${INPUT_BASE_BRANCH}
