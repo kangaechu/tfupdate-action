@@ -89,7 +89,7 @@ function run_tfupdate {
     exit 0
   else
     CURRENT_DATE=$(date "+%Y%m%d-%H%M%S")
-    CHECKOUT_BRANCH="update-${INPUT_RESOURCE}-to-v${VERSION}-${CURRENT_DATE}"
+    CHECKOUT_BRANCH="update-${INPUT_RESOURCE}-to-v${VERSION}-${CURRENT_DATE}-no-changes"
     echo "Checking out to ${CHECKOUT_BRANCH} branch"
     git fetch --all
     git checkout -b ${CHECKOUT_BRANCH} origin/${INPUT_BASE_BRANCH}
