@@ -110,6 +110,10 @@ function run_tfupdate {
     find . -name .terraform-version ${TV_IGNORE_OPTION} -exec sh -c 'TV="$1";VERSION="$2";echo $VERSION > $TV' _ {} $VERSION \;
   fi
 
+  if [ "${INPUT_RESOURCE}" = 'provider' ]; then
+    generate_tflock
+  fi
+
   # Send a pull reuqest agaist the base branch
   if git add . && git diff --cached --exit-code --quiet; then
     echo "No changes"
@@ -122,6 +126,35 @@ function run_tfupdate {
       git push origin HEAD && hub pull-request -m "${UPDATE_MESSAGE}" -m "${PULL_REQUEST_BODY}" -b "${INPUT_BASE_BRANCH}" -l "${INPUT_LABEL}"
     fi
   fi
+}
+
+generate_tflock() {
+  # create a plugin cache dir
+  export TF_PLUGIN_CACHE_DIR="/tmp/terraform.d/plugin-cache"
+  mkdir -p "${TF_PLUGIN_CACHE_DIR}"
+
+  # create a local filesystem mirror to avoid duplicate downloads
+  FS_MIRROR="/tmp/terraform.d/plugins"
+  terraform providers mirror -platform=linux_amd64 -platform=darwin_amd64 "${FS_MIRROR}"
+
+  # update the lock file
+  TFLOCK_DIRS=$(find . -type f -name '.terraform.lock.hcl')
+  for dir in ${TFLOCK_DIRS}
+  do
+    pushd "$dir"
+    # always create a new lock to avoid duplicate downloads by terraoform init -upgrade
+    rm -f .terraform.lock.hcl
+    # get modules to detect provider dependencies inside module
+    terraform init -input=false -no-color -backend=false -plugin-dir="${FS_MIRROR}"
+    # remove a temporary lock file to avoid a checksum mismatch error
+    rm -f .terraform.lock.hcl
+    # generate h1 hashes for all platforms you need
+    # recording zh hashes requires to download from origin, so we intentionally ignore them.
+    terraform providers lock -fs-mirror="${FS_MIRROR}" -platform=linux_amd64 -platform=darwin_amd64
+    # clean up
+    rm -rf .terraform
+    popd
+  done
 }
 
 run_tfupdate
