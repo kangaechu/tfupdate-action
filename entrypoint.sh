@@ -111,7 +111,7 @@ function run_tfupdate {
   fi
 
   if [ "${INPUT_RESOURCE}" = 'provider' ]; then
-    generate_tflock
+    generate_tflock()
   fi
 
   # Send a pull reuqest agaist the base branch
@@ -138,7 +138,7 @@ generate_tflock() {
   terraform providers mirror -platform=linux_amd64 -platform=darwin_amd64 "${FS_MIRROR}"
 
   # update the lock file
-  TFLOCK_DIRS=$(find . -type f -name '.terraform.lock.hcl')
+  TFLOCK_DIRS=$(find . -type f -name '.terraform.lock.hcl' | xargs dirname | sort)
   for dir in ${TFLOCK_DIRS}
   do
     pushd "$dir"
