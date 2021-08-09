@@ -145,7 +145,7 @@ generate_tflock() {
   terraform providers mirror -platform=linux_amd64 -platform=darwin_amd64 "${FS_MIRROR}"
 
   # update the lock file
-  TFLOCK_DIRS=$(find . -type f -name '.terraform.lock.hcl' | xargs dirname | sort)
+  TFLOCK_DIRS=$(find . -type f -name '.terraform.lock.hcl' | xargs -I {} dirname {} | sort)
   for dir in ${TFLOCK_DIRS}
   do
     pushd "$dir"
