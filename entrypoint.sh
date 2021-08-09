@@ -107,7 +107,7 @@ function run_tfupdate {
       TV_IGNORE_OPTION="! -path \"${INPUT_IGNORE_PATH}\""
     fi
     # shellcheck disable=SC2090,SC2086
-    find . -name .terraform-version ${TV_IGNORE_OPTION} -exec sh -c 'TV="$1";echo $VERSION > $TV' _ {} \;
+    find . -name .terraform-version ${TV_IGNORE_OPTION} -exec sh -c 'TV="$1";VERSION="$2";echo $VERSION > $TV' _ {} $VERSION \;
   fi
 
   # Send a pull reuqest agaist the base branch
