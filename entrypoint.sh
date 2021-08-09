@@ -148,7 +148,7 @@ generate_tflock() {
   TFLOCK_DIRS=$(find . -type f -name '.terraform.lock.hcl' | xargs -I {} dirname {} | sort)
   for dir in ${TFLOCK_DIRS}
   do
-    pushd "$dir"
+    cd "$dir"
     # always create a new lock to avoid duplicate downloads by terraoform init -upgrade
     rm -f .terraform.lock.hcl
     # get modules to detect provider dependencies inside module
@@ -160,7 +160,7 @@ generate_tflock() {
     terraform providers lock -fs-mirror="${FS_MIRROR}" -platform=linux_amd64 -platform=darwin_amd64
     # clean up
     rm -rf .terraform
-    popd
+    cd -
   done
 }
 
