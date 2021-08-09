@@ -110,7 +110,14 @@ function run_tfupdate {
     find . -name .terraform-version ${TV_IGNORE_OPTION} -exec sh -c 'TV="$1";VERSION="$2";echo $VERSION > $TV' _ {} $VERSION \;
   fi
 
-  if [ "${INPUT_RESOURCE}" = 'provider' ]; then
+  # update .terraform.lock.hcl
+  TFLOCK_COUNT=$(find . -name .terraform.lock.hcl -type f | wc -l)
+  if [ "${INPUT_RESOURCE}" = 'provider' ] && [ "$TFLOCK_COUNT" -gt 0 ]; then
+    # install terraform
+    TF_VERSION=$(tfupdate release latest hashicorp/terraform)
+    wget -qO- "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" | unzip -d /bin - && chmod +x /bin/terraform
+    terraform version
+
     generate_tflock
   fi
 
