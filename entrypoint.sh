@@ -111,7 +111,7 @@ function run_tfupdate {
   fi
 
   if [ "${INPUT_RESOURCE}" = 'provider' ]; then
-    generate_tflock()
+    generate_tflock
   fi
 
   # Send a pull reuqest agaist the base branch
