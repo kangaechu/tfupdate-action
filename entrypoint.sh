@@ -100,6 +100,15 @@ function run_tfupdate {
   echo "Running tfupdate ${COMMAND}"
   tfupdate ${COMMAND}
 
+  # update .terraform-version
+  if [ "${INPUT_RESOURCE}" = 'terraform' ]; then
+    TV_IGNORE_OPTION=''
+    if [ "${INPUT_IGNORE_PATH}" ]; then
+      TV_IGNORE_OPTION="-not -path \"${INPUT_IGNORE_PATH}\""
+    fi
+    find . -name .terraform-version "${TV_IGNORE_OPTION}" -exec sh -c "echo $VERSION > .terraform-version" \;
+  fi
+
   # Send a pull reuqest agaist the base branch
   if git add . && git diff --cached --exit-code --quiet; then
     echo "No changes"
