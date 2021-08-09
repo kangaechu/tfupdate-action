@@ -103,7 +103,7 @@ function run_tfupdate {
   # update .terraform-version
   if [ "${INPUT_RESOURCE}" = 'terraform' ]; then
     TV_IGNORE_OPTION=''
-    if [ -n "${INPUT_IGNORE_PATH}" ]; then
+    if [ "${INPUT_IGNORE_PATH}" != '' ]; then
       TV_IGNORE_OPTION="-prune \"${INPUT_IGNORE_PATH}\""
     fi
     find . -name .terraform-version "${TV_IGNORE_OPTION}" -exec sh -c "echo $VERSION > .terraform-version" \;
